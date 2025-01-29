@@ -57,11 +57,11 @@
       }
 
       var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/Build.loader.js";
+      var loaderUrl = buildUrl + "/Hikma.loader.js";
       var config = {
-        dataUrl: buildUrl + "/Build.data",
-        frameworkUrl: buildUrl + "/Build.framework.js",
-        codeUrl: buildUrl + "/Build.wasm",
+        dataUrl: buildUrl + "/Hikma.data",
+        frameworkUrl: buildUrl + "/Hikma.framework.js",
+        codeUrl: buildUrl + "/Hikma.wasm",
         streamingAssetsUrl: "StreamingAssets",
         companyName: "DefaultCompany",
         productName: "PhishingEmail",
@@ -117,7 +117,7 @@
               }).then((unityInstance) => {
                 loadingBar.style.display = "none";
                 fullscreenButton.onclick = () => {
-                  document.makeFullscreen('unity-container');
+                  unityInstance.SetFullscreen(1);
                 };
               }).catch((message) => {
                 alert(message);
