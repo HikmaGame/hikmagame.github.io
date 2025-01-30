@@ -19,7 +19,6 @@
         }
 
         #unity-container {
-            position: absolute;
             width: 100vw;
             height: 100vh;
             display: flex;
@@ -28,8 +27,8 @@
         }
 
         #unity-canvas {
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100vh;
             object-fit: contain;
             background: black;
         }
@@ -64,36 +63,12 @@
         var progressBarFull = document.querySelector("#unity-progress-bar-full");
         var unityContainer = document.querySelector("#unity-container");
 
-        function enterFullScreen() {
-            if (unityContainer.requestFullscreen) {
-                unityContainer.requestFullscreen();
-            } else if (unityContainer.mozRequestFullScreen) {
-                unityContainer.mozRequestFullScreen();
-            } else if (unityContainer.webkitRequestFullscreen) {
-                unityContainer.webkitRequestFullscreen();
-            } else if (unityContainer.msRequestFullscreen) {
-                unityContainer.msRequestFullscreen();
-            }
+        function resizeGame() {
+            unityContainer.style.width = window.innerWidth + "px";
+            unityContainer.style.height = window.innerHeight + "px";
+            canvas.style.width = window.innerWidth + "px";
+            canvas.style.height = window.innerHeight + "px";
         }
-
-        function isFullScreen() {
-            return document.fullscreenElement ||
-                document.mozFullScreenElement ||
-                document.webkitFullscreenElement ||
-                document.msFullscreenElement;
-        }
-
-        function checkFullScreen() {
-            if (!isFullScreen()) {
-                document.addEventListener("click", enterFullScreen, { once: true });
-                document.addEventListener("keydown", enterFullScreen, { once: true });
-            }
-        }
-
-        document.addEventListener("fullscreenchange", checkFullScreen);
-        document.addEventListener("mozfullscreenchange", checkFullScreen);
-        document.addEventListener("webkitfullscreenchange", checkFullScreen);
-        document.addEventListener("MSFullscreenChange", checkFullScreen);
 
         var buildUrl = "Build";
         var loaderUrl = buildUrl + "/Hikma.loader.js";
@@ -109,6 +84,7 @@
 
         window.onload = function () {
             document.body.style.direction = 'ltr';
+            resizeGame(); // Ensure the game starts at full size
 
             let script = document.createElement("script");
             script.src = loaderUrl;
@@ -117,19 +93,15 @@
                     progressBarFull.style.width = 100 * progress + "%";
                 }).then((unityInstance) => {
                     loadingBar.style.display = "none";
-
-                    setTimeout(() => {
-                        enterFullScreen();
-                    }, 1000);
-
-                    document.addEventListener("click", enterFullScreen, { once: true });
-                    document.addEventListener("keydown", enterFullScreen, { once: true });
                 }).catch((message) => {
                     alert(message);
                 });
             };
             document.body.appendChild(script);
         };
+
+        // Resize canvas when the window resizes
+        window.addEventListener("resize", resizeGame);
     </script>
 </body>
 </html>
