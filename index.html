@@ -76,6 +76,25 @@
             }
         }
 
+        function isFullScreen() {
+            return document.fullscreenElement ||
+                document.mozFullScreenElement ||
+                document.webkitFullscreenElement ||
+                document.msFullscreenElement;
+        }
+
+        function checkFullScreen() {
+            if (!isFullScreen()) {
+                document.addEventListener("click", enterFullScreen, { once: true });
+                document.addEventListener("keydown", enterFullScreen, { once: true });
+            }
+        }
+
+        document.addEventListener("fullscreenchange", checkFullScreen);
+        document.addEventListener("mozfullscreenchange", checkFullScreen);
+        document.addEventListener("webkitfullscreenchange", checkFullScreen);
+        document.addEventListener("MSFullscreenChange", checkFullScreen);
+
         var buildUrl = "Build";
         var loaderUrl = buildUrl + "/Hikma.loader.js";
         var config = {
@@ -99,12 +118,10 @@
                 }).then((unityInstance) => {
                     loadingBar.style.display = "none";
 
-                    // Try entering full-screen mode after a short delay
                     setTimeout(() => {
                         enterFullScreen();
-                    }, 1000); // Short delay to ensure page loads
+                    }, 1000);
 
-                    // Ensure full-screen mode on user interaction if automatic attempt fails
                     document.addEventListener("click", enterFullScreen, { once: true });
                     document.addEventListener("keydown", enterFullScreen, { once: true });
                 }).catch((message) => {
