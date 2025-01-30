@@ -22,7 +22,7 @@
         #unity-container {
             width: 100%;
             height: 100%;
-            display: flex;
+            display: none; /* Initially hidden */
             align-items: center;
             justify-content: center;
             position: relative;
@@ -81,38 +81,7 @@
         var progressBarFull = document.querySelector("#unity-progress-bar-full");
         var unityContainer = document.querySelector("#unity-container");
         var rotateMessage = document.querySelector("#rotate-message");
-
-        function resizeGame() {
-            var windowWidth = window.innerWidth;
-            var windowHeight = window.innerHeight;
-
-            // Check if the user is on a mobile device and is in portrait mode
-            if (windowWidth < windowHeight) {
-                // Show rotate message
-                rotateMessage.style.display = "block";
-                unityContainer.style.display = "none"; // Hide the game until rotated
-            } else {
-                // Once in landscape, hide the rotate message and show the game
-                rotateMessage.style.display = "none";
-                unityContainer.style.display = "flex";
-
-                var aspectRatio = 16 / 9; // Set your game's aspect ratio here
-                var newWidth, newHeight;
-
-                if (windowWidth / windowHeight > aspectRatio) {
-                    newHeight = windowHeight;
-                    newWidth = windowHeight * aspectRatio;
-                } else {
-                    newWidth = windowWidth;
-                    newHeight = windowWidth / aspectRatio;
-                }
-
-                unityContainer.style.width = newWidth + "px";
-                unityContainer.style.height = newHeight + "px";
-                canvas.style.width = newWidth + "px";
-                canvas.style.height = newHeight + "px";
-            }
-        }
+        var unityInstance = null; // Store Unity instance
 
         var buildUrl = "Build";
         var loaderUrl = buildUrl + "/Hikma.loader.js";
@@ -126,18 +95,15 @@
             productVersion: "1.0"
         };
 
-        window.onload = function () {
-            document.body.style.direction = 'ltr';
-            resizeGame(); // Ensure the game starts at full size
-
-            // Check if the device is in landscape mode on load
-            if (window.innerWidth >= window.innerHeight) {
+        function loadUnityGame() {
+            if (!unityInstance) { // Prevent reloading Unity multiple times
                 let script = document.createElement("script");
                 script.src = loaderUrl;
                 script.onload = () => {
                     createUnityInstance(canvas, config, (progress) => {
                         progressBarFull.style.width = 100 * progress + "%";
-                    }).then((unityInstance) => {
+                    }).then((instance) => {
+                        unityInstance = instance;
                         loadingBar.style.display = "none";
                     }).catch((message) => {
                         alert(message);
@@ -145,10 +111,33 @@
                 };
                 document.body.appendChild(script);
             }
+        }
+
+        function handleOrientation() {
+            var windowWidth = window.innerWidth;
+            var windowHeight = window.innerHeight;
+
+            if (windowWidth < windowHeight) {
+                // Show rotate message and hide game
+                rotateMessage.style.display = "block";
+                unityContainer.style.display = "none";
+            } else {
+                // Hide rotate message, show game
+                rotateMessage.style.display = "none";
+                unityContainer.style.display = "flex";
+
+                // Load Unity if not loaded
+                loadUnityGame();
+            }
+        }
+
+        window.onload = function () {
+            document.body.style.direction = 'ltr';
+            handleOrientation(); // Check orientation on first load
         };
 
-        // Resize canvas when the window resizes
-        window.addEventListener("resize", resizeGame);
+        // Listen for orientation change
+        window.addEventListener("resize", handleOrientation);
     </script>
 </body>
 </html>
