@@ -11,30 +11,30 @@
             margin: 0;
             padding: 0;
             height: 100%;
-            overflow: hidden;
             width: 100%;
-            background: black;
+            overflow: hidden;
+            background-color: black;
             display: flex;
             align-items: center;
             justify-content: center;
-            direction: ltr; /* Ensures correct text input direction */
         }
 
         #unity-container {
-            position: absolute;
-            top: 0;
-            left: 0;
             width: 100vw;
             height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
+            position: absolute;
+            top: 0;
+            left: 0;
         }
 
         #unity-canvas {
-            width: 100vw;
-            height: 100vh;
+            width: 100%;
+            height: 100%;
             display: block;
+            object-fit: contain; /* Prevents stretching */
             background: black;
         }
 
@@ -68,21 +68,21 @@
         var progressBarFull = document.querySelector("#unity-progress-bar-full");
 
         function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+            canvas.style.width = "100vw";
+            canvas.style.height = "100vh";
         }
 
         function enterFullScreen() {
-            if (canvas.requestFullscreen) {
-                canvas.requestFullscreen();
-            } else if (canvas.mozRequestFullScreen) {
-                canvas.mozRequestFullScreen();
-            } else if (canvas.webkitRequestFullscreen) {
-                canvas.webkitRequestFullscreen();
-            } else if (canvas.msRequestFullscreen) {
-                canvas.msRequestFullscreen();
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen();
+            } else if (document.documentElement.mozRequestFullScreen) { // Firefox
+                document.documentElement.mozRequestFullScreen();
+            } else if (document.documentElement.webkitRequestFullscreen) { // Chrome, Safari, Opera
+                document.documentElement.webkitRequestFullscreen();
+            } else if (document.documentElement.msRequestFullscreen) { // IE/Edge
+                document.documentElement.msRequestFullscreen();
             }
-            setTimeout(resizeCanvas, 500);
+            resizeCanvas();
         }
 
         window.addEventListener("resize", resizeCanvas);
@@ -100,7 +100,7 @@
         };
 
         window.onload = function () {
-            document.body.style.direction = 'ltr'; // Fix for reversed text input
+            document.body.style.direction = 'ltr'; // Fix for reversed input
             resizeCanvas();
 
             var script = document.createElement("script");
@@ -110,7 +110,7 @@
                     progressBarFull.style.width = 100 * progress + "%";
                 }).then((unityInstance) => {
                     loadingBar.style.display = "none";
-                    setTimeout(enterFullScreen, 1000); // Auto-enter fullscreen after game loads
+                    setTimeout(enterFullScreen, 500); // Force fullscreen
                 }).catch((message) => {
                     alert(message);
                 });
