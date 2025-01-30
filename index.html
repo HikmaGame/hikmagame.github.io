@@ -23,14 +23,12 @@
             width: 100%;
             height: 100%;
             display: none; /* Initially hidden */
-            align-items: center;
-            justify-content: center;
             position: relative;
         }
 
         #unity-canvas {
-            max-width: 100%;
-            max-height: 100%;
+            width: 100%;
+            height: 100%;
             object-fit: contain;
             background: black;
         }
@@ -125,6 +123,12 @@
                 // Hide rotate message, show game
                 rotateMessage.style.display = "none";
                 unityContainer.style.display = "flex";
+
+                // Adjust the Unity game scaling to fit the full screen
+                unityContainer.style.width = windowWidth + "px";
+                unityContainer.style.height = windowHeight + "px";
+                canvas.style.width = windowWidth + "px";
+                canvas.style.height = windowHeight + "px";
 
                 // Load Unity if not loaded
                 loadUnityGame();
