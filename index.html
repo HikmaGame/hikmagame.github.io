@@ -16,7 +16,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: Arial, sans-serif;
         }
 
         #unity-container {
@@ -46,17 +45,6 @@
             top: 50%;
             transform: translateY(-50%);
         }
-
-        #rotate-message {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: white;
-            font-size: 24px;
-            text-align: center;
-            display: none;
-        }
     </style>
 </head>
 <body>
@@ -68,7 +56,6 @@
                 <div id="unity-progress-bar-full"></div>
             </div>
         </div>
-        <div id="rotate-message">Please rotate your device to landscape mode to play the game.</div>
     </div>
 
     <script>
@@ -76,37 +63,27 @@
         var loadingBar = document.querySelector("#unity-loading-bar");
         var progressBarFull = document.querySelector("#unity-progress-bar-full");
         var unityContainer = document.querySelector("#unity-container");
-        var rotateMessage = document.querySelector("#rotate-message");
 
         function resizeGame() {
             var windowWidth = window.innerWidth;
             var windowHeight = window.innerHeight;
 
-            // Check if the user is on a mobile device and is in portrait mode
-            if (windowWidth < windowHeight) {
-                // Display the message to rotate the device
-                rotateMessage.style.display = "block";
-                unityContainer.style.display = "none"; // Hide the game until rotated
+            // Ensure the aspect ratio is maintained
+            var aspectRatio = 16 / 9; // Set your game's aspect ratio here
+            var newWidth, newHeight;
+
+            if (windowWidth / windowHeight > aspectRatio) {
+                newHeight = windowHeight;
+                newWidth = windowHeight * aspectRatio;
             } else {
-                rotateMessage.style.display = "none";
-                unityContainer.style.display = "flex"; // Show the game when in landscape mode
-
-                var aspectRatio = 16 / 9; // Set your game's aspect ratio here
-                var newWidth, newHeight;
-
-                if (windowWidth / windowHeight > aspectRatio) {
-                    newHeight = windowHeight;
-                    newWidth = windowHeight * aspectRatio;
-                } else {
-                    newWidth = windowWidth;
-                    newHeight = windowWidth / aspectRatio;
-                }
-
-                unityContainer.style.width = newWidth + "px";
-                unityContainer.style.height = newHeight + "px";
-                canvas.style.width = newWidth + "px";
-                canvas.style.height = newHeight + "px";
+                newWidth = windowWidth;
+                newHeight = windowWidth / aspectRatio;
             }
+
+            unityContainer.style.width = newWidth + "px";
+            unityContainer.style.height = newHeight + "px";
+            canvas.style.width = newWidth + "px";
+            canvas.style.height = newHeight + "px";
         }
 
         var buildUrl = "Build";
