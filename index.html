@@ -56,10 +56,15 @@
             font-size: 24px;
             text-align: center;
             display: none;
+            z-index: 100;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
         }
     </style>
 </head>
 <body>
+    <div id="rotate-message">Please rotate your device to landscape mode to play the game.</div>
     <div id="unity-container">
         <canvas id="unity-canvas" width="1" height="1" tabindex="-1"></canvas>
         <div id="unity-loading-bar">
@@ -68,7 +73,6 @@
                 <div id="unity-progress-bar-full"></div>
             </div>
         </div>
-        <div id="rotate-message">Please rotate your device to landscape mode to play the game.</div>
     </div>
 
     <script>
@@ -84,12 +88,13 @@
 
             // Check if the user is on a mobile device and is in portrait mode
             if (windowWidth < windowHeight) {
-                // Display the message to rotate the device
+                // Show rotate message
                 rotateMessage.style.display = "block";
                 unityContainer.style.display = "none"; // Hide the game until rotated
             } else {
+                // Once in landscape, hide the rotate message and show the game
                 rotateMessage.style.display = "none";
-                unityContainer.style.display = "flex"; // Show the game when in landscape mode
+                unityContainer.style.display = "flex";
 
                 var aspectRatio = 16 / 9; // Set your game's aspect ratio here
                 var newWidth, newHeight;
@@ -125,18 +130,21 @@
             document.body.style.direction = 'ltr';
             resizeGame(); // Ensure the game starts at full size
 
-            let script = document.createElement("script");
-            script.src = loaderUrl;
-            script.onload = () => {
-                createUnityInstance(canvas, config, (progress) => {
-                    progressBarFull.style.width = 100 * progress + "%";
-                }).then((unityInstance) => {
-                    loadingBar.style.display = "none";
-                }).catch((message) => {
-                    alert(message);
-                });
-            };
-            document.body.appendChild(script);
+            // Check if the device is in landscape mode on load
+            if (window.innerWidth >= window.innerHeight) {
+                let script = document.createElement("script");
+                script.src = loaderUrl;
+                script.onload = () => {
+                    createUnityInstance(canvas, config, (progress) => {
+                        progressBarFull.style.width = 100 * progress + "%";
+                    }).then((unityInstance) => {
+                        loadingBar.style.display = "none";
+                    }).catch((message) => {
+                        alert(message);
+                    });
+                };
+                document.body.appendChild(script);
+            }
         };
 
         // Resize canvas when the window resizes
