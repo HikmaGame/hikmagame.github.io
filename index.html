@@ -9,8 +9,8 @@
         body, html {
             margin: 0;
             padding: 0;
-            height: 100%;
             width: 100%;
+            height: 100%;
             overflow: hidden;
             background-color: black;
             display: flex;
@@ -19,7 +19,6 @@
         }
 
         #unity-container {
-            position: absolute;
             width: 100vw;
             height: 100vh;
             display: flex;
@@ -28,13 +27,10 @@
         }
 
         #unity-canvas {
-            background: black;
-            width: 100%;
-            height: 100%;
+            width: 100vw;
+            height: 100vh;
             object-fit: contain;
         }
-
-      
 
         #rotate-message {
             display: none;
@@ -56,7 +52,7 @@
     <div id="rotate-message">Please rotate your device to landscape mode to continue.</div>
 
     <div id="unity-container">
-        <canvas id="unity-canvas" width="1" height="1" tabindex="-1"></canvas>
+        <canvas id="unity-canvas" tabindex="-1"></canvas>
         <div id="unity-loading-bar">
             <div id="unity-logo"></div>
             <div id="unity-progress-bar-empty">
@@ -82,25 +78,16 @@
             }
         }
 
-        function resizeGame() {
-            var windowWidth = window.innerWidth;
-            var windowHeight = window.innerHeight;
-
-            var aspectRatio = 16 / 9; // Change this to your game's actual aspect ratio (e.g., 4 / 3 if needed)
-            var newWidth, newHeight;
-
-            if (windowWidth / windowHeight > aspectRatio) {
-                newHeight = windowHeight;
-                newWidth = windowHeight * aspectRatio;
-            } else {
-                newWidth = windowWidth;
-                newHeight = windowWidth / aspectRatio;
+        function setFullScreen() {
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen();
+            } else if (document.documentElement.mozRequestFullScreen) {
+                document.documentElement.mozRequestFullScreen();
+            } else if (document.documentElement.webkitRequestFullscreen) {
+                document.documentElement.webkitRequestFullscreen();
+            } else if (document.documentElement.msRequestFullscreen) {
+                document.documentElement.msRequestFullscreen();
             }
-
-            unityContainer.style.width = newWidth + "px";
-            unityContainer.style.height = newHeight + "px";
-            canvas.style.width = newWidth + "px";
-            canvas.style.height = newHeight + "px";
         }
 
         var buildUrl = "Build";
@@ -118,7 +105,7 @@
         window.onload = function () {
             document.body.style.direction = 'ltr';
             checkOrientation();
-            resizeGame();
+            setTimeout(setFullScreen, 1000); // Delay to allow user interaction requirement
 
             let script = document.createElement("script");
             script.src = loaderUrl;
@@ -138,7 +125,6 @@
 
         window.addEventListener("resize", () => {
             checkOrientation();
-            resizeGame();
         });
     </script>
 </body>
